@@ -71,7 +71,7 @@ function createPolygon(x, y, radius, npoints, draw=false) {
 	return poly	
 }
 
-function createWallCorner(MARGIN=0, draw_shape=false, fill_color='white'){
+function createWallCorner(MARGIN=0, draw_shape=false, curve=false, fill_color='white'){
     LEFT_END = width * 1/6 - MARGIN
     RIGHT_END = width * 5/6 + MARGIN
     TOP_END = height * 1/6 - MARGIN
@@ -92,10 +92,21 @@ function createWallCorner(MARGIN=0, draw_shape=false, fill_color='white'){
     poly.push(createVector(LEFT_END-10,TOP_END+10))
 
 	if(draw_shape){
-		fill(fill_color)
-		beginShape();
-		for (const { x, y } of poly)  curveVertex(x, y);
-		endShape(CLOSE);
+		stroke('white')
+		line(MIDDLE_X, 0, MIDDLE_X, height)
+
+		if(curve){
+			fill(fill_color)
+			beginShape();
+			for (const { x, y } of poly)  curveVertex(x, y);
+			endShape(CLOSE);
+		}
+		else{
+			fill(fill_color)
+			beginShape();
+			for (const { x, y } of poly)  vertex(x, y);
+			endShape(CLOSE);
+		}
 	}
 
 	return poly
@@ -104,6 +115,8 @@ function createWallCorner(MARGIN=0, draw_shape=false, fill_color='white'){
 function draw() {
 	// poly = createPolygon(width/2, height/2, POLYGON_RADIUS , POLYGON_SIDES)
 	poly = createWallCorner()
+	createWallCorner(MARGIN=100, draw_shape=true, curve=false,fill_color='#ac46a1')
+	createWallCorner(MARGIN=80, draw_shape=true, curve=false,fill_color='#47126b')
 
 	poly_neg = false
 	// poly_neg = createPolygon(width/2, height/2, POLYGON_RADIUS/2 , POLYGON_SIDES)
@@ -197,8 +210,6 @@ function makeShadowBlob(blob, radius, rgba_color) {
 	}
 	endShape()
 }
-
-
 
 function hasCollision(cir) {
 	// Check for collisions with the edges

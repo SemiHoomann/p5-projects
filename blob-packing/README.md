@@ -25,3 +25,7 @@ Form hollow polygons with blobs. (like asteroid belt)
 ## Version 5:
 Form a corner wall with blobs (Using a custom polygon)
 <img alt="blob_v3" src="./imgs/blobs_v5_form_wall_corner_shape.png" width=500px/>
+
+## Version 6:
+Draw a container to hold the blobs and corner of the wall
+<img alt="blob_v3" src="./imgs/blobs_v6_draw_container_and_corner.png" width=500px/>
