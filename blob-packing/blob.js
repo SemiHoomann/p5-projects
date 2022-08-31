@@ -1,10 +1,13 @@
+let maxval = randomIntFromInterval(20, 30)
+const TOTAL_ATTEMPTS = maxval
+const TOTAL_CIRCLES = 1000
+const MIN_CIRCLE_SIZE = randomIntFromInterval(5,10)
+const MAX_CIRCLE_SIZE = maxval
 
-const TOTAL_ATTEMPTS = 20
-const TOTAL_CIRCLES = 2000
-const MIN_CIRCLE_SIZE = 5
-const MAX_CIRCLE_SIZE = 40
+const POLYGON_SIDES = randomChoice([3,4,5,10])
 
 let circles = []
+let circles2 = []
 // const COLORS = "https://coolors.co/palette/ffd6ff-e7c6ff-c8b6ff-b8c0ff-bbd0ff"
 // const COLORS = "https://coolors.co/palette/ea698b-d55d92-c05299-ac46a1-973aa8-822faf-6d23b6-6411ad-571089-47126b"
 // const PALETTE = getPalette(COLORS)
@@ -32,6 +35,9 @@ function randomChoice(arr) {
     return arr[Math.floor(arr.length * Math.random())];
 }
 
+function randomIntFromInterval(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
@@ -43,23 +49,39 @@ function setup() {
 	// Deviation shuld be close to circle size. Should not be more than half of radius
 	
 	ANGLE = TWO_PI/TOTAL_POINTS
+	POLYGON_RADIUS = windowWidth/2 //*3/4
 	colorMode(HSB);
 }
 
-function draw() {	
-	for(let i=0; i < TOTAL_CIRCLES; i++){
-		createCircle()
+function createPolygon(x, y, radius, npoints, draw=false) {
+	let poly = []
+  let angle = TWO_PI / npoints;
+  for (let a = 0; a < TWO_PI; a += angle) {
+    let sx = x + cos(a) * radius;
+    let sy = y + sin(a) * radius;
+    poly.push(createVector(sx, sy))
+  }
+	
+	if(draw){
+		beginShape();
+		for (const { x, y } of poly)  vertex(x, y);
+		endShape(CLOSE);
 	}
-	// fill('white')
-	// rect(0,0,20,height)
-	// rect(width-20,0,20,height)
-	// rect(0,0,width,20)
-	// rect(0,height-20, width, 20)
+	
+	return poly	
+}
+
+function draw() {	
+	poly = createPolygon(width/2, height/2, POLYGON_RADIUS , POLYGON_SIDES)
+
+	for(let i=0; i < TOTAL_CIRCLES; i++){
+		createCircle(poly)
+	}
 	noLoop();	
 }
 
 
-function createCircle() {	
+function createCircle(poly) {	
 	let cir = {
 		x : Math.floor(Math.random() * windowWidth),
 		y : Math.floor(Math.random() * windowHeight),
@@ -75,21 +97,24 @@ function createCircle() {
 				cir.r--
 			}
 		}
-		circles.push(cir)
-		c = randomChoice(PALETTE)
-		fill(c[0], c[1], c[2] + (Math.random()*20))
-		
-		noStroke()
-		makeBlob(cir.x, cir.y, cir.r*2)
-		// circle(cir.x, cir.y, cir.r*2)
+	
+		if(collideCirclePoly(cir.x, cir.y, cir.r, poly, true)){
+				circles.push(cir)
+				noStroke()
+				makeBlob(cir.x, cir.y, cir.r*2)
+		 }		
 	}
 }
 
 function makeBlob(center_x, center_y, radius) {
 	let deviation = DEVIATION * radius/5
 	let blob_points = []
-	// translate(trans_x, trans_y);	
-	beginShape();		
+	
+	c = randomChoice(PALETTE)
+	blob_color = color(c[0], c[1], c[2] + (Math.random()*20))
+	fill(blob_color)
+	
+	// calculate blob points
 	for (var i = 0; i <= TOTAL_POINTS; i++) {
 		var x = (Math.random() * deviation) + center_x + (cos(ANGLE * i) * radius);
 		var y = (Math.random() * deviation) + center_y + (sin(ANGLE * i) * radius);
@@ -98,21 +123,28 @@ function makeBlob(center_x, center_y, radius) {
 		
 		if(y< 20){ y=20 + (Math.random()*10)}
 		else{ if(y>height-20){y=height-20 - (Math.random()*5)}}
-		
 			
-		blob_points.push({'x':x, 'y':y, 'r':radius})
-		curveVertex(x, y);		
+		// blob_points.push({'x':x, 'y':y, 'r':radius})
+		blob_points.push(createVector(x,y))
+				
 	}
-	endShape();	
-	makeShadowBlob(blob_points, radius)
-	makeShadowBlob(blob_points, radius)
-	makeShadowBlob(blob_points, radius)
+	
+	//draw the blob
+		beginShape();		
+		for(let b=0; b< blob_points.length; b++) {
+			curveVertex(blob_points[b].x, blob_points[b].y);
+		}
+		endShape();	
+
+	// add shadow to blob
+	makeShadowBlob(blob_points, radius, 'rgba(0,0,0, 0.10)')
+	makeShadowBlob(blob_points, radius, 'rgba(0,0,0, 0.10)')
+	makeShadowBlob(blob_points, radius, 'rgba(0,0,0, 0.10)')
 }
 
-function makeShadowBlob(blob, radius) {
-	console.log(blob[0].x)
+function makeShadowBlob(blob, radius, rgba_color) {
 	let deviation = DEVIATION * radius/5
-	fill('rgba(0,0,0, 0.10)');
+	fill(rgba_color);
 	beginShape()
 	for(var j=0; j <blob.length; j++) {
 		new_x = blob[j].x + (Math.random() * deviation)
@@ -123,8 +155,9 @@ function makeShadowBlob(blob, radius) {
 	endShape()
 }
 
+
+
 function hasCollision(cir) {
-	
 	// Check for collisions with the edges
 	if (cir.x + cir.r >= width ||
 			cir.x - cir.r <= 0) {
