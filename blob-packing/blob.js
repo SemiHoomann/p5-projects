@@ -74,6 +74,9 @@ function createPolygon(x, y, radius, npoints, draw=false) {
 function draw() {	
 	poly = createPolygon(width/2, height/2, POLYGON_RADIUS , POLYGON_SIDES)
 
+	// poly_neg = false
+	poly_neg = createPolygon(width/2, height/2, POLYGON_RADIUS/2 , POLYGON_SIDES)
+
 	for(let i=0; i < TOTAL_CIRCLES; i++){
 		createCircle(poly)
 	}
@@ -97,12 +100,21 @@ function createCircle(poly) {
 				cir.r--
 			}
 		}
-	
-		if(collideCirclePoly(cir.x, cir.y, cir.r, poly, true)){
-				circles.push(cir)
-				noStroke()
-				makeBlob(cir.x, cir.y, cir.r*2)
-		 }		
+
+		if(poly_neg){
+			if(collideCirclePoly(cir.x, cir.y, cir.r, poly, true) && !collideCirclePoly(cir.x, cir.y, cir.r, poly_neg, true)){
+					circles.push(cir)
+					noStroke()
+					makeBlob(cir.x, cir.y, cir.r*2)
+			 }
+		}
+		else{
+			if(collideCirclePoly(cir.x, cir.y, cir.r, poly, true)){
+					circles.push(cir)
+					noStroke()
+					makeBlob(cir.x, cir.y, cir.r*2)
+			 }
+		}
 	}
 }
 

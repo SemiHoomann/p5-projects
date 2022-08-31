@@ -14,7 +14,10 @@ Circle packing customized for blobs with a basic light theme.
 A darker purple theme with lighting layers.  
 <img alt="blob_v2" src="./imgs/blobs_v2_dark_purple_with_shine.png" width=500px/>
 
-
 ## Version 3:
 Form polygon shapes with the blobs
 <img alt="blob_v3" src="./imgs/blobs_v3_shape_formation.png" width=500px/>
+
+## Version 4:
+Form hollow polygons with blobs. (like asteroid belt)
+<img alt="blob_v3" src="./imgs/blobs_v4_hollow_shapes.png" width=500px/>
