@@ -21,3 +21,7 @@ Form polygon shapes with the blobs
 ## Version 4:
 Form hollow polygons with blobs. (like asteroid belt)
 <img alt="blob_v3" src="./imgs/blobs_v4_hollow_shapes.png" width=500px/>
+
+## Version 5:
+Form a corner wall with blobs (Using a custom polygon)
+<img alt="blob_v3" src="./imgs/blobs_v5_form_wall_corner_shape.png" width=500px/>

@@ -71,11 +71,42 @@ function createPolygon(x, y, radius, npoints, draw=false) {
 	return poly	
 }
 
-function draw() {	
-	poly = createPolygon(width/2, height/2, POLYGON_RADIUS , POLYGON_SIDES)
+function createWallCorner(MARGIN=0, draw_shape=false, fill_color='white'){
+    LEFT_END = width * 1/6 - MARGIN
+    RIGHT_END = width * 5/6 + MARGIN
+    TOP_END = height * 1/6 - MARGIN
+    BOTTOM_END = height * 5/6 + MARGIN
+    MIDDLE_X = width/2 //+ MARGIN
+    MIDDLE_Y = height/4 - MARGIN
+	BOTTOM_CORNERS = height*3/4 + MARGIN
 
-	// poly_neg = false
-	poly_neg = createPolygon(width/2, height/2, POLYGON_RADIUS/2 , POLYGON_SIDES)
+	let poly = []
+    // poly.push(createVector(LEFT_END,TOP_END))
+    poly.push(createVector(MIDDLE_X, MIDDLE_Y))
+    poly.push(createVector(MIDDLE_X, MIDDLE_Y))
+    poly.push(createVector(RIGHT_END, TOP_END))
+
+    poly.push(createVector(RIGHT_END, BOTTOM_CORNERS))
+    poly.push(createVector(MIDDLE_X, BOTTOM_END))
+    poly.push(createVector(LEFT_END,BOTTOM_CORNERS))
+    poly.push(createVector(LEFT_END-10,TOP_END+10))
+
+	if(draw_shape){
+		fill(fill_color)
+		beginShape();
+		for (const { x, y } of poly)  curveVertex(x, y);
+		endShape(CLOSE);
+	}
+
+	return poly
+}  
+
+function draw() {
+	// poly = createPolygon(width/2, height/2, POLYGON_RADIUS , POLYGON_SIDES)
+	poly = createWallCorner()
+
+	poly_neg = false
+	// poly_neg = createPolygon(width/2, height/2, POLYGON_RADIUS/2 , POLYGON_SIDES)
 
 	for(let i=0; i < TOTAL_CIRCLES; i++){
 		createCircle(poly)
